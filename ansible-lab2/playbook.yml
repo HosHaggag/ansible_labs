@@ -1,0 +1,8 @@
+- name: lab_2 playbook
+  hosts: all
+  tasks:
+   - name: Say My vars
+     apt:
+         name: "{{ package_name }}"
+         state: "{{ package_version }}"
+        
