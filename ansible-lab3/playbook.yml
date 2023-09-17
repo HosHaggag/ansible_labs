@@ -1,117 +1,38 @@
 - name: lab_3 
   hosts: All
-  gather_facts: false
   vars:
       package_name: nginx
       package_version: latest
       path:
-       - src: "index.html"
-         dest: "/var/www/html"
-       - src: "file.css"
-         dest: "/var/www/html"
-       - src: "file.js"         
-         dest: "/var/www/html"
+       - "file.css"
+       - "file.js"   
+      main_file: "index.html"       
   tasks:
       
-    - name:  handler module
+    - name:  install nginx
       apt:
         name: "{{ package_name }}"
         state: "{{ package_version }}"
-      notify: copy_files
- 
-  handlers:
-    - name: copy_files
+      notify: copy_files 
+
+    - name: copy main file
       copy:
-         src: "{{ item.src }}"
-         dest: "{{ item.dest }}"
+         src: "{{ main_file }}"
+         dest: "/var/www/html"
+      notify: restart nginx  
+
+
+  handlers:
+
+    - name: copy_files
+      template:
+         src: "{{ item }}"
+         dest: "/var/www/html"
       loop: "{{ path }}"    
-      notify: print
+      notify: restart nginx
 
-    - name: print
-      debug:
-         msg: "printt"      
-
-      # handlers:
-      #- name: my_handler
-      #  service:
-      #    name: nginx
-      #    state: started
-
-
-
-
-
-
-
-
-
-
-
-
-         #    - name:  handler module
-         #apt:
-         #name: "{{ package_name }}"
-         # state: "{{ package_version }}"
-         #notify: my_handler
-
-
-         # handlers:
-         #- name: my_handler
-         # service:
-         #name: nginx
-         # state: restarted
-
-   
-
-
-
-
-
-
-
-
-
-          # - name: my task1 with register
-          #command: cat /var/www/html/index.html
-          #register: result
-
-    
-          #  - name: restart service
-          #service:
-          #name: nginx
-          # state: started
-          #when: result['changed'] or result['failed'] != false 
-
-
-
-
-
-
-
-
-
-          #- name: installing nginx
-     #apt:
-             #name: nginx
-       #state: latest
-       #when: ansible_facts['distribution'] == "Ubuntu"
-
-
-     #   - name: installing httpd
-     #     package:
-             #       name: httpd
-       #     when: ansible_facts['distribution'] == "CentOS"
-
-     #   - name: restart nginx
-     #     service:
-             #       name: nginx
-       #       state: restarted
-       #     when: ansible_facts['distribution'] == "Ubuntu"
-
-     #   - name: restart httpd
-     #     service:
-             #name: httpd
-       # state: restarted
-       #     when: ansible_facts['distribution'] == "CentOS"
-
+    - name: restart nginx
+      service:
+         name: "{{ package_name }}" 
+         state: restarted
 
