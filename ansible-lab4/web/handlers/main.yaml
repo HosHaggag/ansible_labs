@@ -1,0 +1,15 @@
+- name: copy_files
+  copy:
+    src: "{{ item }}"
+    dest: "/var/www/html/{{ item }}"
+  with_items: "{{ files }}"
+  when: package_install.changed  
+  register: copy_files
+  notify: restart_package
+
+
+- name: restart_package
+  service:
+    name: "{{ package_name }}"
+    state: restarted
+  when: copy_files.changed

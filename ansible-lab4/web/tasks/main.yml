@@ -1,0 +1,15 @@
+- name: install package
+  apt:
+    name: "{{ package_name }}"
+    state: "{{ package_version }}"
+  register: package_install
+  notify: copy_files
+
+
+- name: copy_main_file
+  template:
+    src: "{{ main_file }}"
+    dest: "/var/www/html"
+  when: package_install.changed  
+  notify: restart_package
+

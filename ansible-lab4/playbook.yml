@@ -1,0 +1,6 @@
+- name: lab_3 
+  hosts: All     
+  roles:
+    - web
+    
+      

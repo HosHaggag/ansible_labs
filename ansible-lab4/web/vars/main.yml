@@ -1,0 +1,6 @@
+package_name: nginx
+package_version: latest
+files:
+  - file.js
+  - file.css
+main_file: index.html  
